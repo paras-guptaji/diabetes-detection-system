@@ -4,9 +4,13 @@ import joblib
 import numpy as np
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from tensorflow.keras.models import load_model as keras_load_model
+try:
+    from tensorflow.keras.models import load_model as keras_load_model
+except ImportError:
+    keras_load_model = None
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "lstm_model.h5")
+NPZ_MODEL_PATH = os.path.join(os.path.dirname(__file__), "model_weights.npz")
 SCALER_PATH = os.path.join(os.path.dirname(__file__), "scaler.pkl")
 
 FEATURE_ORDER = [
@@ -77,18 +81,84 @@ app = Flask(__name__)
 CORS(app)
 
 
+def _sigmoid(x):
+    return 1.0 / (1.0 + np.exp(-np.clip(x, -500, 500)))
+
+
+def _relu(x):
+    return np.maximum(0, x)
+
+
+class NumpyLSTMModel:
+    def __init__(self, weights_path):
+        data = np.load(weights_path)
+        self.w_lstm1 = data["w_lstm1"]
+        self.u_lstm1 = data["u_lstm1"]
+        self.b_lstm1 = data["b_lstm1"]
+        self.w_lstm2 = data["w_lstm2"]
+        self.u_lstm2 = data["u_lstm2"]
+        self.b_lstm2 = data["b_lstm2"]
+        self.w_dense1 = data["w_dense1"]
+        self.b_dense1 = data["b_dense1"]
+        self.w_dense2 = data["w_dense2"]
+        self.b_dense2 = data["b_dense2"]
+
+    def predict(self, X, verbose=0):
+        batch_size, timesteps, _ = X.shape
+        u1 = 128
+        h1 = np.zeros((batch_size, u1))
+        c1 = np.zeros((batch_size, u1))
+        seq1 = []
+        for t in range(timesteps):
+            xt = X[:, t, :]
+            z = xt @ self.w_lstm1 + h1 @ self.u_lstm1 + self.b_lstm1
+            i = _sigmoid(z[:, :u1])
+            f = _sigmoid(z[:, u1:2*u1])
+            c_cand = np.tanh(z[:, 2*u1:3*u1])
+            c1 = f * c1 + i * c_cand
+            o = _sigmoid(z[:, 3*u1:])
+            h1 = o * np.tanh(c1)
+            seq1.append(h1)
+        seq1 = np.stack(seq1, axis=1)
+
+        u2 = 64
+        h2 = np.zeros((batch_size, u2))
+        c2 = np.zeros((batch_size, u2))
+        for t in range(timesteps):
+            xt = seq1[:, t, :]
+            z = xt @ self.w_lstm2 + h2 @ self.u_lstm2 + self.b_lstm2
+            i = _sigmoid(z[:, :u2])
+            f = _sigmoid(z[:, u2:2*u2])
+            c_cand = np.tanh(z[:, 2*u2:3*u2])
+            c2 = f * c2 + i * c_cand
+            o = _sigmoid(z[:, 3*u2:])
+            h2 = o * np.tanh(c2)
+
+        d1 = _relu(h2 @ self.w_dense1 + self.b_dense1)
+        return _sigmoid(d1 @ self.w_dense2 + self.b_dense2)
+
+
 def load_model():
-    if not os.path.exists(MODEL_PATH):
-        raise FileNotFoundError(
-            "lstm_model.h5 not found. Place the exported model inside ml_api."
-        )
     if not os.path.exists(SCALER_PATH):
         raise FileNotFoundError(
             "scaler.pkl not found. Place the scaler inside ml_api."
         )
+    scaler = joblib.load(SCALER_PATH)
+
+    # Prefer lightweight pure-NumPy model (uses ~20MB RAM vs 800MB TensorFlow)
+    if os.path.exists(NPZ_MODEL_PATH):
+        model = NumpyLSTMModel(NPZ_MODEL_PATH)
+        return model, scaler
+
+    if not os.path.exists(MODEL_PATH):
+        raise FileNotFoundError(
+            "Neither model_weights.npz nor lstm_model.h5 found inside ml_api."
+        )
+
+    if keras_load_model is None:
+        raise RuntimeError("TensorFlow is required to load lstm_model.h5")
 
     model = keras_load_model(MODEL_PATH)
-    scaler = joblib.load(SCALER_PATH)
     return model, scaler
 
 
