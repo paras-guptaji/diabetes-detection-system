@@ -2,8 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const PREDICTION_API_URL =
-  import.meta.env.VITE_PREDICTION_API_URL || "http://127.0.0.1:5001";
+const PREDICTION_API_URL = (
+  import.meta.env.VITE_PREDICTION_API_URL || "http://127.0.0.1:5001"
+)
+  .trim()
+  .replace(/\/+$/, "");
 
 const initialFormState = {
   hba1c: "",

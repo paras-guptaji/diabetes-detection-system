@@ -1,5 +1,12 @@
-const API_URL =
-  import.meta.env.VITE_API_URL || "http://127.0.0.1:5000/api/auth";
+const rawApiUrl = (
+  import.meta.env.VITE_API_URL || "http://127.0.0.1:5000/api/auth"
+)
+  .trim()
+  .replace(/\/+$/, "");
+
+const API_URL = rawApiUrl.endsWith("/api/auth")
+  ? rawApiUrl
+  : `${rawApiUrl}/api/auth`;
 
 async function sendRequest(path, payload) {
   let response;
