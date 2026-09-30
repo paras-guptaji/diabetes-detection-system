@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
 import AuthLayout from "../components/AuthLayout";
 import { useAuth } from "../context/AuthContext";
-import { loginWithGoogle, signupUser } from "../services/authService";
+import { signupUser } from "../services/authService";
 import { validateSignupForm } from "../utils/validation";
 
 const initialState = {
@@ -53,37 +51,6 @@ export default function SignupPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      setLoading(true);
-      setStatus({ type: "", message: "" });
-
-      const googleProfile = jwtDecode(credentialResponse.credential);
-      const response = await loginWithGoogle({
-        name: googleProfile.name,
-        email: googleProfile.email,
-        googleId: googleProfile.sub,
-      });
-
-      login({ token: response.token, user: response.user });
-      navigate("/dashboard");
-    } catch (error) {
-      setStatus({
-        type: "error",
-        message: error.message || "Google sign-up failed.",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleError = () => {
-    setStatus({
-      type: "error",
-      message: "Google sign-in was cancelled or could not be completed.",
-    });
   };
 
   return (
@@ -155,10 +122,6 @@ export default function SignupPage() {
           {loading ? "Creating account..." : "Sign Up"}
         </button>
       </form>
-
-      <div className="separator">or continue with</div>
-
-      <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleError} />
 
       <p className="footer-text">
         Already have an account? <Link to="/login">Login here</Link>

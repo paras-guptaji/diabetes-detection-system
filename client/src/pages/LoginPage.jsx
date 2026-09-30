@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
 import AuthLayout from "../components/AuthLayout";
 import { useAuth } from "../context/AuthContext";
-import { loginUser, loginWithGoogle } from "../services/authService";
+import { loginUser } from "../services/authService";
 import { validateLoginForm } from "../utils/validation";
 
 const initialState = {
@@ -46,39 +44,6 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      setLoading(true);
-      setStatus({ type: "", message: "" });
-
-      // Decode the Google credential to access the basic profile details.
-      const googleProfile = jwtDecode(credentialResponse.credential);
-
-      const response = await loginWithGoogle({
-        name: googleProfile.name,
-        email: googleProfile.email,
-        googleId: googleProfile.sub,
-      });
-
-      login({ token: response.token, user: response.user });
-      navigate("/dashboard");
-    } catch (error) {
-      setStatus({
-        type: "error",
-        message: error.message || "Google login failed.",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleError = () => {
-    setStatus({
-      type: "error",
-      message: "Google sign-in was cancelled or could not be completed.",
-    });
   };
 
   return (
@@ -123,11 +88,6 @@ export default function LoginPage() {
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>
-
-      <div className="separator">or continue with</div>
-
-      {/* GoogleLogin renders the official Google Identity Services button. */}
-      <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleError} />
 
       <p className="footer-text">
         New to the platform? <Link to="/signup">Create an account</Link>
