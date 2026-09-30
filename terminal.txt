@@ -1,0 +1,11 @@
+# Terminal 1 - ML Prediction API (Port 5001)
+cd C:\Users\admin\OneDrive\Desktop\clg\diabetes_pred
+.\run_ml_api.bat
+
+# Terminal 2 - Express Auth Server (Port 5000)
+cd C:\Users\admin\OneDrive\Desktop\clg\diabetes_pred\server
+npm start
+
+# Terminal 3 - React Vite Frontend (Port 5173)
+cd C:\Users\admin\OneDrive\Desktop\clg\diabetes_pred\client
+npm run dev

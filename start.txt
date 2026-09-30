@@ -1,0 +1,15 @@
+# To run the full project, start all 3 services:
+
+1. ML API (Port 5001):
+   Double-click `run_ml_api.bat` OR run:
+   C:\venvs\diabetes\Scripts\python.exe ml_api\app.py
+
+2. Express Backend (Port 5000):
+   cd server
+   npm install
+   npm run dev
+
+3. React Client (Port 5173):
+   cd client
+   npm install
+   npm run dev

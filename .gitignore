@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+venv/
+.venv/
+ml_api/venv/
+
+# Build outputs
+client/dist/
+dist/
+build/
+
+# Environment files
+.env
+client/.env
+server/.env
+.env.local
+.env.*.local
+
+# Python cache & logs
+__pycache__/
+*/__pycache__/
+*.py[cod]
+*$py.class
+*.log
+ml_api/*.log
+client/*.log
+server/*.log
+
+# Editor & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

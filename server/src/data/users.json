@@ -1,0 +1,47 @@
+[
+  {
+    "id": "48784b38-1f49-4291-bfd1-5e079e0b7f29",
+    "name": "Paras Gupta",
+    "email": "gparas7411@gmail.com",
+    "password": "$2a$10$KAMc1LKjcqyfia7Iu..Bp.147tN3abzMT/lKRD3n9jkZEypq38xGy",
+    "authProvider": "local",
+    "googleId": "",
+    "createdAt": "2026-04-05T18:37:19.489Z"
+  },
+  {
+    "id": "53a6a58c-842e-4d34-bc3c-86ab1a951317",
+    "name": "Test User",
+    "email": "codex-test@example.com",
+    "password": "$2a$10$Bttf3Qgodbg7ycDEG9v3r.vpSl0B7EOZpu5jzwSt6jbk7Cd4v0HjS",
+    "authProvider": "local",
+    "googleId": "",
+    "createdAt": "2026-04-30T06:33:43.851Z"
+  },
+  {
+    "id": "f7e63aa3-4556-46d3-8bc2-1b246b3e9bb8",
+    "name": "Retry User",
+    "email": "codex-retry@example.com",
+    "password": "$2a$10$R9Y7/pFVmlzNNRfaL9n9xeahzmPqjDROtWzgRCUixgYui.igBifNq",
+    "authProvider": "local",
+    "googleId": "",
+    "createdAt": "2026-04-30T06:35:34.874Z"
+  },
+  {
+    "id": "7bad8f79-6922-42b0-9057-fe48ca84d03b",
+    "name": "Live Check",
+    "email": "codex-live@example.com",
+    "password": "$2a$10$eOZO1Q2yVxL3/J5ixIvsl.aMtpTbYcUaFeT50Z2qEk09D0IBzpRCq",
+    "authProvider": "local",
+    "googleId": "",
+    "createdAt": "2026-05-01T18:51:53.879Z"
+  },
+  {
+    "id": "51f53347-d02b-42a3-a12c-35083072d184",
+    "name": "Praduman Saini",
+    "email": "pradumansaini1@gmail.com",
+    "password": "$2a$10$jRixITOJa487Bf7I6W76f.ZJ/6fvf4M.BKL2kCfYmCG6ImmPliMZK",
+    "authProvider": "local",
+    "googleId": "",
+    "createdAt": "2026-05-05T09:30:54.294Z"
+  }
+]
